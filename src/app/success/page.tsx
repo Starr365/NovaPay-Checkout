@@ -1,22 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Copy, Check } from "lucide-react";
+import { CopyableText } from "../../components/CopyableText";
 
 export default function SuccessPage() {
-  const [copied, setCopied] = useState(false);
   const transactionId = "NC1234567";
-
-  const handleCopyTransactionId = async () => {
-    try {
-      await navigator.clipboard.writeText(transactionId);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy transaction ID:", err);
-    }
-  };
 
   return (
     <div className="min-h-screen p-4 flex flex-col items-center justify-center">
@@ -46,29 +35,7 @@ export default function SuccessPage() {
       {/* Full width transaction container */}
       <div className="w-full max-w-md mx-auto px-4">
         <div className="bg-neutral-100 w-full px-5 py-3 rounded-lg mb-8">
-          <div className="flex justify-between items-center text-gray-700">
-            <span className="font-sm">Transaction ID</span>
-            <div className="flex items-center gap-2">
-              <span className="font-sm">{transactionId}</span>
-              <button
-                onClick={handleCopyTransactionId}
-                className="p-1 hover:bg-neutral-200 rounded transition-colors"
-                title={copied ? "Copied!" : "Copy transaction ID"}
-              >
-                {copied ? (
-                  <Check
-                    size={16}
-                    className="text-green-600"
-                  />
-                ) : (
-                  <Copy
-                    size={16}
-                    className="text-gray-500"
-                  />
-                )}
-              </button>
-            </div>
-          </div>
+          <CopyableText label="Transaction ID" text={transactionId} />
         </div>
       </div>
 
