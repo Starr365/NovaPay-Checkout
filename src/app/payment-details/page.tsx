@@ -1,158 +1,84 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { FormField } from "../../components/FormField";
 import { Button } from "../../components/Button";
-import { SummaryCard } from "../../components/SummaryCard";
-import { usePayment } from "../../context/PaymentContext";
+import { ArrowLeft, Lock } from "lucide-react";
 
 export default function PaymentDetails() {
   const router = useRouter();
-  const { amount, userData } = usePayment();
-  const [formData, setFormData] = useState({
-    cardNumber: "",
-    expiryDate: "",
-    cvv: "",
-  });
-  const [errors, setErrors] = useState({
-    cardNumber: "",
-    expiryDate: "",
-    cvv: "",
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const validateForm = () => {
-    let valid = true;
-    const newErrors = { cardNumber: "", expiryDate: "", cvv: "" };
-
-    if (!formData.cardNumber) {
-      newErrors.cardNumber = "Card number is required";
-      valid = false;
-    } else if (!/^\d{16}$/.test(formData.cardNumber.replace(/\s+/g, ""))) {
-      newErrors.cardNumber = "Please enter a valid card number";
-      valid = false;
-    }
-
-    if (!formData.expiryDate) {
-      newErrors.expiryDate = "Expiry date is required";
-      valid = false;
-    } else if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(formData.expiryDate)) {
-      newErrors.expiryDate = "Please enter a valid expiry date (MM/YY)";
-      valid = false;
-    }
-
-    if (!formData.cvv) {
-      newErrors.cvv = "CVV is required";
-      valid = false;
-    } else if (!/^\d{3,4}$/.test(formData.cvv)) {
-      newErrors.cvv = "Please enter a valid CVV";
-      valid = false;
-    }
-
-    setErrors(newErrors);
-    return valid;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (validateForm()) {
-      setIsLoading(true);
-      setError("");
-
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        console.log("Payment submitted:", formData);
-        router.push("/success");
-      } catch (err) {
-        setError("Payment failed. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
 
   const handleBack = () => {
     router.back();
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-md mx-auto">
-        <div className="flex flex-col items-center mb-8">
-          <div className="w-8 h-8 bg-black rounded-full mb-4"></div>
-          <h1 className="text-2xl font-bold text-black">Payment Details</h1>
+    <div className="min-h-screen from-gray-50 to-gray-100">
+      {/* Header */}
+
+        <div className="max-w-md mx-auto px-4 py-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleBack}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <ArrowLeft size={20} className="text-gray-600" />
+            </button>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-semibold text-gray-900">Send ETH to the address below</h1>
+            </div>
+          </div>
         </div>
 
-        <SummaryCard
-          title="Payment Summary"
-          amount={`$${amount.toFixed(2)}`}
-          description="Total amount to be paid"
-        />
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <FormField
-            label="Card Number"
-            type="text"
-            placeholder="1234 5678 9012 3456"
-            value={formData.cardNumber}
-            onChange={handleChange}
-            name="cardNumber"
-            required
-            error={errors.cardNumber}
-          />
+      {/* Main Content */}
+      <div className="max-w-md mx-auto px-4 py-8">
+        <div>
+          <div className="bg-teal-200 rounded-lg ">
 
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              label="Expiry Date"
-              type="text"
-              placeholder="MM/YY"
-              value={formData.expiryDate}
-              onChange={handleChange}
-              name="expiryDate"
-              required
-              error={errors.expiryDate}
-            />
-
-            <FormField
-              label="CVV"
-              type="text"
-              placeholder="123"
-              value={formData.cvv}
-              onChange={handleChange}
-              name="cvv"
-              required
-              error={errors.cvv}
-            />
           </div>
+        </div>
+        {/* User Info Card */}
+        <div className="w-full max-w-md mx-auto px-4">
+          <div className="bg-neutral-100 w-full px-5 py-3 rounded-lg mb-8">
+            <div className="flex justify-between items-center text-gray-700">
+              <span className="font-sm">Transaction ID</span>
+              <div className="flex items-center gap-2">
+                <span className="font-sm">100ETH</span>
 
-          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+              </div>
+            </div>
+            <div className="flex justify-between items-center text-gray-700">
+              <span className="font-sm">Transaction ID</span>
+              <div className="flex items-center gap-2">
+                <span className="font-sm">100ETH</span>
 
-          <div className="flex gap-4">
-            <Button
-              type="button"
-              onClick={handleBack}
-              variant="secondary"
-              className="flex-1"
-            >
-              Back
-            </Button>
+              </div>
+            </div>
+            <div className="flex justify-between items-center text-gray-700">
+              <span className="font-sm">Transaction ID</span>
+              <div className="flex items-center gap-2">
+                <span className="font-sm">100ETH</span>
 
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="flex-1"
-            >
-              {isLoading ? "Processing..." : "Pay Now"}
-            </Button>
+              </div>
+            </div>
           </div>
-        </form>
+        </div>
+
+        
+
+        {/* Security Notice */}
+        <div className="mt-6 text-center">
+          <p className="text-xs text-gray-500 flex items-left gap-1">
+            <Lock size={12} />
+            Only send USDT to this address. Ensure the sender is on the CELO network otherwise you might lose your deposit
+          </p>
+        </div>
+
+        <button>
+          <Button variant="primary" className="w-full mt-6">
+            I have sent it
+          </Button>
+        </button>
       </div>
     </div>
   );
