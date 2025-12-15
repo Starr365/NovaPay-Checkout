@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --primary: #000000;
+  --secondary: #f5f5f5;
+  --accent: #ff6b35;
+  --text-primary: #1a1a1a;
+  --text-secondary: #666666;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-outfit);
+  --font-outfit: "Outfit", sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-outfit), var(--font-sans), system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure Outfit font is used throughout the application */
+* {
+  font-family: inherit;
+}
+
+html {
+  font-family: var(--font-outfit), var(--font-sans), system-ui, -apple-system, sans-serif;
+}
+
+@media (min-width: 768px) {
+  body {
+    padding: 1rem;
+  }
+}
