@@ -10,8 +10,9 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Crypto Checkout",
-  description: "Secure crypto payment checkout",
+  title: "NovaPay Crypto Checkout",
+  description: "Secure crypto payment checkout platform. Fast, easy, and safe crypto-to-cash payments.",
+
 };
 
 export default function RootLayout({

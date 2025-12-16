@@ -1,132 +1,183 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { SummaryCard } from "../components/SummaryCard";
-import { FormField } from "../components/FormField";
 import { Button } from "../components/Button";
-import { usePayment } from "../context/PaymentContext";
+import Image from "next/image";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 export default function Home() {
   const router = useRouter();
-  const { setAmount, setUserData } = usePayment();
-  const [formData, setFormData] = useState({
-    email: "",
-    name: "",
-    amount: "",
-  });
-  const [errors, setErrors] = useState({
-    email: "",
-    name: "",
-    amount: "",
-  });
+  const [amount, setAmount] = useState("");
+  const [selectedCurrency, setSelectedCurrency] = useState("ETH");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [payFrom, setPayFrom] = useState("");
+  const [payTo, setPayTo] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  interface Currency {
+    code: string;
+    name: string;
+    icon: string;
+  }
 
-  const validateForm = () => {
-    let valid = true;
-    const newErrors = { email: "", name: "", amount: "" };
+  const currencies: Currency[] = [
+    { code: "ETH", name: "Ethereum", icon: "/eth-icon.svg" },
+    { code: "CELO", name: "Celo", icon: "/celo-icon.svg" },
+    { code: "TON", name: "TON", icon: "/ton-icon.svg" },
+    { code: "BNB", name: "BNB", icon: "/bnb-icon.svg" },
+  ];
 
-    if (!formData.email) {
-      newErrors.email = "Email is required";
-      valid = false;
-    } else if (!/^[\w-.]+@([\w-]+.)+[\w-]{2,4}$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email";
-      valid = false;
-    }
-
-    if (!formData.name) {
-      newErrors.name = "Name is required";
-      valid = false;
-    }
-
-    if (!formData.amount) {
-      newErrors.amount = "Amount is required";
-      valid = false;
-    } else if (isNaN(parseFloat(formData.amount)) || parseFloat(formData.amount) <= 0) {
-      newErrors.amount = "Please enter a valid amount";
-      valid = false;
-    }
-
-    setErrors(newErrors);
-    return valid;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (validateForm()) {
-      setUserData({ email: formData.email, name: formData.name });
-      setAmount(parseFloat(formData.amount));
-      router.push("/payment-details");
-    }
+  const handleCurrencySelect = (currency: Currency) => {
+    setSelectedCurrency(currency.code);
+    setIsDropdownOpen(false);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen p-4">
       <div className="max-w-md mx-auto">
         <div className="flex flex-col items-center mb-8">
-          <Image
-            src="/NC BlackTrans BG.png"
-            alt="Novacrust Logo"
-            width={50}
-            height={50}
-            className="mb-4"
-          />
-          <h1 className="text-2xl font-bold text-black">Checkout</h1>
+          <h1 className="text-2xl font-bold text-black">Crypto To Cash Checkout</h1>
         </div>
 
-        <SummaryCard
-          title="Payment Summary"
-          amount={`$${formData.amount || "0.00"}`}
-          description="Total amount to be paid"
-        />
+        <div className="space-y-6">
+          <div className="border border-gray-200 rounded-4xl p-4 space-y-2">
+            <label htmlFor="pay-amount" className="block text-sm font-medium text-gray-700">You pay</label>
+            <div className="relative">
+              <div className="flex items-center w-full px-4 py-3 bg-white">
+                <input
+                  id="pay-amount"
+                  type="number"
+                  inputMode="decimal"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="0.00"
+                  className="flex-1 outline-none text-lg"
+                  aria-label="Amount to pay in cryptocurrency"
+                />
+                <button
+                  type="button"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex items-center space-x-2 ml-2 border border-gray-300 rounded-full px-2 hover:bg-gray-50 transition-colors"
+                  aria-haspopup="listbox"
+                  aria-expanded={isDropdownOpen}
+                  aria-label={`Select currency. Currently selected: ${selectedCurrency}`}
+                >
+                  <Image
+                    src={currencies.find(c => c.code === selectedCurrency)?.icon || "/eth-icon.svg"}
+                    alt={selectedCurrency}
+                    width={24}
+                    height={24}
+                  />
+                  <span className="text-lg font-medium">{selectedCurrency}</span>
+                  <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
+                </button>
+              </div>
+              {isDropdownOpen && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10" role="listbox">
+                  {currencies.map((currency) => (
+                    <button
+                      type="button"
+                      key={currency.code}
+                      onClick={() => handleCurrencySelect(currency)}
+                      className="w-full px-4 py-3 flex items-center space-x-3 hover:bg-gray-50 transition-colors"
+                      role="option"
+                      aria-selected={currency.code === selectedCurrency}
+                    >
+                      <Image
+                        src={currency.icon}
+                        alt={currency.name}
+                        width={24}
+                        height={24}
+                      />
+                      <span className="font-medium">{currency.name}</span>
+                      <span className="ml-auto text-gray-500">{currency.code}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <FormField
-            label="Email"
-            type="email"
-            placeholder="Enter your email"
-            value={formData.email}
-            onChange={handleChange}
-            name="email"
-            required
-            error={errors.email}
-          />
+          <div className="border border-gray-200 rounded-4xl p-4 space-y-2">
+            <label htmlFor="receive-amount" className="block text-sm font-medium text-gray-700">You receive</label>
+            <div className="relative">
+              <div className="flex items-center w-full px-4 py-3 bg-white">
+                <input
+                  id="receive-amount"
+                  type="number"
+                  inputMode="decimal"
+                  value={amount}
+                  disabled
+                  placeholder="0.00"
+                  className="flex-1 outline-none text-lg"
+                  aria-label="Amount you will receive"
+                />
+                <button
+                  type="button"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex items-center space-x-2 ml-2 border border-gray-300 rounded-full px-2 hover:bg-gray-50 transition-colors"
+                  aria-haspopup="listbox"
+                  aria-expanded={isDropdownOpen}
+                  aria-label={`Select currency. Currently selected: ${selectedCurrency}`}
+                >
+                  <Image
+                    src={currencies.find(c => c.code === selectedCurrency)?.icon || "/eth-icon.svg"}
+                    alt={selectedCurrency}
+                    width={24}
+                    height={24}
+                  />
+                  <span className="text-lg font-medium">{selectedCurrency}</span>
+                  <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+          </div>
 
-          <FormField
-            label="Name"
-            type="text"
-            placeholder="Enter your name"
-            value={formData.name}
-            onChange={handleChange}
-            name="name"
-            required
-            error={errors.name}
-          />
 
-          <FormField
-            label="Amount"
-            type="text"
-            placeholder="Enter amount"
-            value={formData.amount}
-            onChange={handleChange}
-            name="amount"
-            required
-            error={errors.amount}
-          />
+          <div className="space-y-2">
+            <label htmlFor="pay-from" className="block text-sm font-medium text-gray-700">Pay from</label>
+            <div className="relative">
+              <select
+                id="pay-from"
+                value={payFrom}
+                onChange={(e) => setPayFrom(e.target.value)}
+                className="w-full appearance-none px-4 py-3 border border-gray-300 rounded-full bg-white"
+              >
+                <option value="" disabled>Select an option</option>
+                <option>MetaMask</option>
+                <option>Coinbase Wallet</option>
+                <option>Ledger</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="pay-to" className="block text-sm font-medium text-gray-700">Pay to</label>
+            <div className="relative">
+              <select
+                id="pay-to"
+                value={payTo}
+                onChange={(e) => setPayTo(e.target.value)}
+                className="w-full appearance-none px-4 py-3 border border-gray-300 rounded-full bg-white"
+              >
+                <option value="" disabled>Select an option</option>
+                <option>Bank account</option>
+                <option>Payout provider</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
 
           <Button
-            type="submit"
+            type="button"
             className="w-full"
             size="lg"
+            onClick={() => router.push("/payment-details")}
           >
             Continue
           </Button>
-        </form>
+        </div>
       </div>
     </div>
   );
-};
+}
