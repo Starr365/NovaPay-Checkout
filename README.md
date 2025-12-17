@@ -46,9 +46,6 @@ NovaPay Checkout is a production-ready crypto payment checkout application built
 - ✅ Proper color contrast ratios (WCAG AA)
 - ✅ Form field associations with labels
 - ✅ Role attributes for custom components (`listbox`, `option`, `region`, `alert`)
-- ✅ `aria-expanded` and `aria-haspopup` for dropdowns
-- ✅ `aria-pressed` for toggle states
-- ✅ `aria-invalid` and `aria-describedby` for form validation
 - ✅ Screen reader friendly copy buttons with state announcements
 - ✅ Proper alt text for all images
 

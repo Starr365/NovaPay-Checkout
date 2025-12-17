@@ -32,17 +32,17 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen p-4">
-      <div className="max-w-md mx-auto">
-        <div className="flex flex-col items-center mb-8">
-          <h1 className="text-2xl font-bold text-black">Crypto To Cash Checkout</h1>
+    <div className="min-h-screen px-4 py-6">
+      <div className="w-full max-w-md mx-auto">
+        <div className="flex flex-col items-center mb-6">
+          <h1 className="text-xl sm:text-2xl font-bold text-black">Crypto To Cash Checkout</h1>
         </div>
 
         <div className="space-y-6">
           <div className="border border-gray-200 rounded-4xl p-4 space-y-2">
             <label htmlFor="pay-amount" className="block text-sm font-medium text-gray-700">You pay</label>
             <div className="relative">
-              <div className="flex items-center w-full px-4 py-3 bg-white">
+              <div className="flex items-center w-full gap-2 px-3 py-3 bg-white">
                 <input
                   id="pay-amount"
                   type="number"
@@ -50,13 +50,13 @@ export default function Home() {
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="0.00"
-                  className="flex-1 outline-none text-lg"
+                  className="flex-1 min-w-0 outline-none text-lg"
                   aria-label="Amount to pay in cryptocurrency"
                 />
                 <button
                   type="button"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center space-x-2 ml-2 border border-gray-300 rounded-full px-2 hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-2 shrink-0 border border-gray-300 rounded-full px-2 py-1 hover:bg-gray-50 transition-colors"
                   aria-haspopup="listbox"
                   aria-expanded={isDropdownOpen}
                   aria-label={`Select currency. Currently selected: ${selectedCurrency}`}
@@ -72,13 +72,13 @@ export default function Home() {
                 </button>
               </div>
               {isDropdownOpen && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10" role="listbox">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 w-full max-h-56 overflow-auto" role="listbox">
                   {currencies.map((currency) => (
                     <button
                       type="button"
                       key={currency.code}
                       onClick={() => handleCurrencySelect(currency)}
-                      className="w-full px-4 py-3 flex items-center space-x-3 hover:bg-gray-50 transition-colors"
+                      className="w-full px-3 py-2 flex items-center gap-3 hover:bg-gray-50 transition-colors text-sm"
                       role="option"
                       aria-selected={currency.code === selectedCurrency}
                     >
@@ -100,7 +100,7 @@ export default function Home() {
           <div className="border border-gray-200 rounded-4xl p-4 space-y-2">
             <label htmlFor="receive-amount" className="block text-sm font-medium text-gray-700">You receive</label>
             <div className="relative">
-              <div className="flex items-center w-full px-4 py-3 bg-white">
+              <div className="flex items-center w-full gap-2 px-3 py-3 bg-white">
                 <input
                   id="receive-amount"
                   type="number"
@@ -108,13 +108,13 @@ export default function Home() {
                   value={amount}
                   disabled
                   placeholder="0.00"
-                  className="flex-1 outline-none text-lg"
+                  className="flex-1 min-w-0 outline-none text-lg"
                   aria-label="Amount you will receive"
                 />
                 <button
                   type="button"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center space-x-2 ml-2 border border-gray-300 rounded-full px-2 hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-2 shrink-0 border border-gray-300 rounded-full px-2 py-1 hover:bg-gray-50 transition-colors"
                   aria-haspopup="listbox"
                   aria-expanded={isDropdownOpen}
                   aria-label={`Select currency. Currently selected: ${selectedCurrency}`}
